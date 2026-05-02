@@ -7,9 +7,9 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  ACR_NAME: myacr2026
+  ACR_NAME: containerregistry12345
   IMAGE_NAME: todo-frontend
-  WEBAPP_NAME: todo-frontend-app
+  WEBAPP_NAME: web-appname
 
 steps:
 - task: Docker@2
@@ -25,6 +25,6 @@ steps:
 - task: AzureWebAppContainer@1
   displayName: Deploy to Web App
   inputs:
-    azureSubscription: 'my-azure-connection'
+    azureSubscription: 'azure resources'
     appName: '$(WEBAPP_NAME)'
     containers: '$(ACR_NAME).azurecr.io/$(IMAGE_NAME):latest'
