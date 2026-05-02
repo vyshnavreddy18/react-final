@@ -1,39 +1,30 @@
-name: Build and Deploy to Azure
-
-on:
-  push:
-    branches:
+trigger:
+  branches:
+    include:
       - main
 
-env:
-  ACR_NAME: <your-acr-name>
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  ACR_NAME: myacr2026
   IMAGE_NAME: todo-frontend
-  WEBAPP_NAME: <your-webapp-name>
+  WEBAPP_NAME: todo-frontend-app
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+steps:
+- task: Docker@2
+  displayName: Build and Push Image
+  inputs:
+    command: 'buildAndPush'
+    repository: '$(IMAGE_NAME)'
+    dockerfile: 'Dockerfile'
+    containerRegistry: 'my-azure-connection'
+    tags: |
+      latest
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: Login to ACR
-      run: az acr login --name $ACR_NAME
-
-    - name: Build Docker Image
-      run: docker build -t $ACR_NAME.azurecr.io/$IMAGE_NAME:latest .
-
-    - name: Push to ACR
-      run: docker push $ACR_NAME.azurecr.io/$IMAGE_NAME:latest
-
-    - name: Deploy to Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.WEBAPP_NAME }}
-        images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+- task: AzureWebAppContainer@1
+  displayName: Deploy to Web App
+  inputs:
+    azureSubscription: 'my-azure-connection'
+    appName: '$(WEBAPP_NAME)'
+    containers: '$(ACR_NAME).azurecr.io/$(IMAGE_NAME):latest'
