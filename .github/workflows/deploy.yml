@@ -18,7 +18,7 @@ steps:
     command: 'buildAndPush'
     repository: '$(IMAGE_NAME)'
     dockerfile: 'Dockerfile'
-    containerRegistry: 'docker123'
+    containerRegistry: 'docker1234'
     tags: |
       latest
 
