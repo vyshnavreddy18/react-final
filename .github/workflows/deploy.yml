@@ -18,7 +18,7 @@ steps:
     command: 'buildAndPush'
     repository: '$(IMAGE_NAME)'
     dockerfile: 'Dockerfile'
-    containerRegistry: 'my-azure-connection'
+    containerRegistry: 'docker123'
     tags: |
       latest
 
